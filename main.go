@@ -31,6 +31,10 @@ func runAcceptor(port int) {
     }
 }
 
-func handleRequest(conn net.Conn, data *kdb.K, msgtype kdb.ReqType) {
-    log.Println(data)
+func handleRequest(conn net.Conn, data *kdb.K, msgtype kdb.ReqType, e error) {
+    if data != nil {
+        log.Println(data)
+    } else {
+        log.Println(e)
+    }
 }
