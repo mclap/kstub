@@ -1,40 +1,38 @@
 package main
 
 import (
-    "fmt"
-    "net"
+    "flag"
     "log"
-    "github.com/mclap/kdbgo"
 )
 
+type Backend struct {
+    config *BackendConfig
+    outputs map[string]string
+    context interface{}
+    ch chan *KdbMsg
+}
+
+var backends = make(map[string]*Backend)
+
 func main() {
-    runAcceptor(5001)
-}
+    flag.Parse()
 
-func runAcceptor(port int) {
-    log.Println("accepting at", port)
-    listener, err := net.Listen("tcp", ":"+fmt.Sprint(port))
-    if err != nil {
-        // Use fatal to exit if the listener fails to start
-        log.Fatal(err)
+    for index, backend := range config.Backend {
+        backends[backend.Name] = &Backend{
+            config: config.Backend[index],
+            outputs: make(map[string]string),
+            context: nil,
+            ch: make(chan *KdbMsg),
+            }
+        log.Println("register backend:", backend.Name, backends[backend.Name])
+        go runBackend(backend.Name)
     }
-    defer listener.Close()
 
-    for {
-        conn, err := listener.Accept()
-        if err != nil {
-            // Print the error using a log.Fatal would exit the server
-            log.Println(err)
-        }
-        // Using a go routine to handle the connection
-        go kdb.HandleClientConnectionEx(conn, handleRequest)
+    for _, listen := range config.Listen {
+        log.Println("starting listener", listen)
+        go runAcceptor(listen, backends[listen.Backend])
     }
-}
 
-func handleRequest(conn net.Conn, data *kdb.K, msgtype kdb.ReqType, e error) {
-    if data != nil {
-        log.Println(data)
-    } else {
-        log.Println(e)
-    }
+    // FIXME: sleep forever
+    select{}
 }

@@ -1,0 +1,13 @@
+listen:
+    - port: 5001
+      backend: csv1
+    - port: 5002
+      backend: sqlite1
+
+backend:
+    - name: csv1
+      driver: csv
+      output: "test[0].csv"
+    - name: sqlite1
+      driver: sqlite
+      output: "file:data1.db"
