@@ -61,8 +61,8 @@ func HandleClientConnectionEx2(conn net.Conn, handleFunc func(net.Conn, *kdb.K, 
         d, msgtype, err := kdb.Decode(rbuf)
 
         if err == io.EOF {
-        conn.Close()
-        return
+            conn.Close()
+            return
         }
 
         handleFunc(conn, d, msgtype, err, backend)
