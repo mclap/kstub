@@ -21,6 +21,10 @@ type BackendConfig struct {
 type Config struct {
     Listen []*ServerConfig
     Backend []*BackendConfig
+    Queries struct {
+        Insert []string
+        Select []string
+    }
 }
 
 var config Config
