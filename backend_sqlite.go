@@ -19,7 +19,7 @@ func runBackendSqlite(backend *Backend) {
 
     for {
         msg, ok := <-backend.ch
-        if ok == false {
+        if !ok {
             log.Println(msg, ok, "<-- loop broke!")
             break // exit break loop
         }
@@ -52,7 +52,7 @@ func processInsert(db *sql.DB, Req string, Target string, Params *kdb.K) {
         buf.WriteString(")")
         // placeholders
         buf.WriteString(" VALUES (")
-        for pos, _ := range t.Columns {
+        for pos := range t.Columns {
             if pos > 0 {
                 buf.WriteString(",")
             }
@@ -82,10 +82,10 @@ func processInsert(db *sql.DB, Req string, Target string, Params *kdb.K) {
 
         for row:=0; row < t.Data[0].Len(); row++ {
             args := make([]interface{}, len(t.Columns))
-            for ci, _ := range t.Columns {
+            for ci := range t.Columns {
                 elm := t.Data[ci].Index(row)
-                switch elm.(type) {
-                case kdb.Time: args[ci] = (time.Time)(elm.(kdb.Time))
+                switch elm := elm.(type) {
+                case kdb.Time: args[ci] = (time.Time)(elm)
                 default:
                     args[ci] = elm
                 }

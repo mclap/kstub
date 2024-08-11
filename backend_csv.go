@@ -7,7 +7,7 @@ import (
 func runBackendCSV(backend *Backend) {
     for {
         msg, ok := <-backend.ch
-        if ok == false {
+        if !ok {
             log.Println(msg, ok, "<-- loop broke!")
             break // exit break loop
         } else {
